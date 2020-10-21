@@ -9,6 +9,10 @@ export default class App extends Component {
     //set state to be empty array if you assume it will eventually be an array, this gives access to array methods
     state = { videos: [], selectedVideo: null };
 
+    componentDidMount(){
+        this.onTermSubmit('cats');
+    }
+
     onTermSubmit = async (term) => {
         //youtube is now a preconfigured instance of axios
         const response = await youtube.get('/search', {
@@ -16,7 +20,7 @@ export default class App extends Component {
                 q: term
             }
         })
-        this.setState({ videos: response.data.items });
+        this.setState({ videos: response.data.items, selectedVideo: response.data.items[0] });
     };
 
     onVideoSelect = (video) => {
@@ -27,8 +31,16 @@ export default class App extends Component {
         return (
             <div className="ui container">
                 <SearchBar onFormSubmit={this.onTermSubmit} />
-                <VideoDetail video={this.state.selectedVideo} />
-                <VideoList onVideoSelect={this.onVideoSelect} videos={this.state.videos} />
+                <div className="ui grid">
+                    <div className="ui row">
+                        <div className="eleven wide column">
+                            <VideoDetail video={this.state.selectedVideo} />
+                        </div>
+                        <div className="five wide column">
+                            <VideoList onVideoSelect={this.onVideoSelect} videos={this.state.videos} />
+                        </div>
+                    </div>
+                </div>
             </div>
         )
     }
